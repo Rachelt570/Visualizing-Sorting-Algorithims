@@ -1,0 +1,79 @@
+
+@import url('https://fonts.googleapis.com/css?family=Dosis&display=swap');
+*
+{
+	max-width: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+body
+{
+	background: #ccc;
+}
+header {
+
+	font-family: 'Dosis', sans-serif;
+	background: linear-gradient(90deg, rgba(218,0,255,1) 0%, rgba(0,129,255,1) 100%);
+	color: #fff;
+	max-width: 100%;
+	margin: 0px;
+	padding: 16px;
+}
+nav
+{	
+	display: flex;
+	width: 95%;
+	justify-content: space-between;
+}
+
+input {
+	cursor: pointer;
+}
+select {
+	cursor: pointer;
+}
+nav input[type=button]
+{
+	padding: 12px;
+	width: 10%;
+	text-decoration: none;
+	background: radial-gradient(circle, rgba(0,255,46,1) 0%, rgba(0,255,239,1) 100%);
+	border-radius: 3px;
+	border-color: #000;
+}
+nav input[type=range]
+{
+	margin: 0px 30px;
+	margin-top: 12px;
+
+}
+nav input[type=button]:hover
+{
+	background: radial-gradient(circle, rgba(255,0,14,1) 0%, rgba(239,0,255,1) 100%);
+}
+
+#area 
+{
+	display: flex;
+	justify-content: center;
+}
+
+#description 
+{
+	text-align: center;
+}
+
+#description p 
+{
+	padding: 12px;
+}
+#description h2
+{
+	text-decoration: underline;
+	font-weight: bold;
+	padding-bottom: 24px;
+}
+#description h4
+{
+	display: inline;
+}
