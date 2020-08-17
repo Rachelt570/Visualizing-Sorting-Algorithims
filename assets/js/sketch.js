@@ -3,6 +3,7 @@ var canvasHeight;
 var canvasWidth;
 var elementCount;
 var values = [];
+var states = []; 
 var minimum;
 var maximum;
 var sortSpeed;
@@ -11,14 +12,22 @@ var barSpred;
 var sortMethod;
 
 
-function setup() {
+Array.prototype.swap = function(a, b) {
+	let input = this;
+	let tmp = input[a];
+	input[a] = input[b];
+	input[b] = tmp;
 
+}
+
+function setup() {
+	frameRate(2);
 	noStroke();
 
 	sortSpeed = 2;
 	minimum = 50;
 	maximum = 300;
-	elementCount = 100;
+	elementCount = 50;
 	barSpred = (3);
 	canvasWidth = windowWidth;
 	canvasHeight = windowHeight/2;
@@ -27,31 +36,26 @@ function setup() {
 		values.push(new int);
 		values[i] = random(maximum-minimum) + minimum;
 	}
+
+
 	createCanvas(canvasWidth, canvasHeight);
 }
 
-//Because a < 500 and b < 500 and a > 0 and b > 0 this is safe
-function swap(array, a, b)
+async function swap(array, a, b)
 {
-		array[a] += array[b]; //Overflow can happen if values get big
-		array[b] = array[a] - array[b]; // b becomes a
-		array[a] -= array[b]; // a becomes b;
+		await sleep(30);	
+		let temp = 	array[a];
+		array[a] = array[b];
+		array[b] = temp; 
 }
 
 
+function sleep(milliseconds) { 
+        return new Promise(resolve => setTimeout(resolve, milliseconds)); 
+} 
 function draw() {
-	/*
-	for (let i = 0; i < values.length; i++)
-	{
-		for (let n = 0; n < values.length-i-1; n++)
-		{
-			if(values[n] > values[n+1])
-			{
-				swap(values, values[n], values[n+1]);
-			}
-		}	
-	}*/
 
+	values = sort(values, values.length);
 	background(0);
 	stroke(255);		
 	var barWidth = (canvasWidth / (elementCount) - 1);
@@ -59,7 +63,7 @@ function draw() {
 	barSpred = 1;          
 	for (let i = 0; i < values.length; i++)
 	{
-		rect(x, canvasHeight, barWidth - barSpred, values[i] - canvasHeight);
+		rect(x, canvasHeight, barWidth - barSpred, values[i] - canvasHeight);	
 		x+=(barSpred + barWidth);
 	}
 

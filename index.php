@@ -12,7 +12,7 @@
 		<span> 
 			Number of Elements
 			<input type = "range" min = "2" value="25"  max = "50" id = "elementCount">
-			<button id = "elementCounter" value = "25" > 25 </button>
+			<button id = "	" value = "25" > 25 </button>
 		</span> 
 		<span> 
 			Sorting Speed
