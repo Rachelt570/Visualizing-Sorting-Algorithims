@@ -1,7 +1,7 @@
 var sortMethod;
 let values = [];
 let states = []; 
-let elementCount = 25; 
+let elementCount = 500; 
 
 function setup() 
 { 
@@ -13,10 +13,57 @@ function setup()
     	values[i] = float(random(height)); 
         states[i] = -1;  
     }   
-    bubbleSort(values, 0, values.length);        
+   // bubblesort(values, 0, values.length);
+   quicksort(values, 0, values.length);       
 } 
 
-async function bubbleSort(arr, start, end) 
+async function quicksort(arr, start, end) 
+{
+  if (start >= end) 
+  {
+    return;
+  }
+  let index = await partition(arr, start, end);
+  states[index] = -1;
+
+  await Promise.all ([
+    quicksort(arr, index + 1, end),
+    quicksort(arr, start, index - 1)
+
+  ]);
+}
+async function partition(arr, start, end) 
+{
+  for (let i = start; i < end; i++) 
+  {
+    states[i] = 1;
+  }
+  let pivotValue = arr[end];
+  let pivotIndex = start;
+  states[pivotIndex] = 0;
+  for (let i = start; i < end; i++) 
+  {
+    if (arr[i] < pivotValue) 
+    {
+      await swap(arr, i, pivotIndex);
+      states[pivotIndex] = -1;
+      pivotIndex++;
+      states[pivotIndex] = 0;
+    }
+  }
+  await swap(arr, pivotIndex, end);
+
+  for (let i = start; i < end; i++)
+  {
+    if (i != pivotIndex) 
+    {
+      states[i] = -1;
+    }
+  }
+
+  return pivotIndex;	
+}
+async function bubblesort(arr, start, end) 
 { 
 	if(start >= end) 
 	{ 
@@ -72,12 +119,14 @@ function draw()
 			} 
 			rect(i*elementWidth, height - values[i], elementWidth, values[i]); 
 		} 
+	
+     	
 	}
 } 
 
 async function swap(arr, a, b) 
 { 
-	await sleep(20); 
+	await sleep(25); 
 	let tmp = arr[a]; 
 	arr[a] = arr[b]; 
 	arr[b] = tmp; 
