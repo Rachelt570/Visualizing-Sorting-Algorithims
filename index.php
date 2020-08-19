@@ -4,6 +4,8 @@
 	<title>Visualizing Sorting Algorithms</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="assets/css/style.css">
+	 	<script src = "assets/js/jquery.js"></script>
+
 </head>
 <body>
 <header>
@@ -12,7 +14,7 @@
 		<span> 
 			Number of Elements
 			<input type = "range" min = "2" value="25"  max = "50" id = "elementCount">
-			<button id = "	" value = "25" > 25 </button>
+			<button id = "elementCounter" value = "25" > 25 </button>
 		</span> 
 		<span> 
 			Sorting Speed
@@ -57,7 +59,6 @@
  		</p>
  	</section>
 
- 	<script src = "assets/js/jquery.js"></script>
  	<script src = "assets/js/main.js"> </script>
  	<script src = "assets/js/p5.js"> </script>
  	<script src = "assets/js/p5.sound.js"> </script>

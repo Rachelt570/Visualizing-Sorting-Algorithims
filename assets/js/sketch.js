@@ -1,21 +1,115 @@
-var sortMethod;
+let sortMethod;
+let bubblesortText = "haha";
+let quicksortText = "afas";
 let values = [];
 let states = []; 
-let elementCount = 500; 
+let elementCount;
+let sorting_speed;
+
+$(document).ready(function() {
+		sortMethod = "Bubblesort";
+		
+	});
+
+
+
 
 function setup() 
-{ 
-	elementWidth = (displayWidth / elementCount);
+{ 	
 	createCanvas(displayWidth, displayHeight/2);           
-    values = new Array(floor(width/elementWidth)); 
-    for(let i = 0; i < values.length; i++) 
-    { 
-    	values[i] = float(random(height)); 
-        states[i] = -1;  
-    }   
-   // bubblesort(values, 0, values.length);
-   quicksort(values, 0, values.length);       
+
 } 
+$("#elementCount").on('input', function() {
+	if($("#sortButton").val() == "Sort") {
+		element_count = $(this).val(); 
+		$("#elementCounter").text($(this).val());
+		}
+});
+
+// Update Sorting Speed
+$("#sortingSpeed").on('input', function() {
+	if ($("#sortButton").val() == "Sort") {
+		sorting_speed = $(this).val();
+		$("#sortingSpeedCounter").text($(this).val());
+	}
+});	
+
+$("#sortButton").click(function() {
+		if( $("#generateArray").val() != "Regenerate") 		
+		{
+			alert("You must generate an array first");
+			return;
+		}
+		if( $("#sortButton").val() == "Sort") 
+		{
+			$("#sortButton").prop("value", "Stop");
+				if (sortMethod == "Bubblesort")
+				 {
+					bubblesort(values, 0, values.length);
+				}
+				else if (sortMethod == "Quicksort") 
+				{
+					quicksort(values, 0, values.length);
+				}
+		}
+		else {
+			$("#sortButton").prop("value", "Sort");
+		}
+		algorithim_value = $("#algorithms").val();
+		$(algorithim_value).text(title);
+		if (algorithim_value == "Bubble Sort")
+		{
+			
+		}
+		else 
+		{
+			
+		}
+
+		console.log($("#algorithms").val());
+	});
+
+
+$("#generateArray").click(function(){
+	if( $("#generateArray").val() == "Generate Array") 	
+	{
+		$("#generateArray").prop("value", "Regenerate");
+
+	}
+	elementCount = $("#elementCounter").text();
+	elementWidth = (displayWidth / elementCount);
+	values = new Array(floor(width/elementWidth));
+		for(let i = 0; i < values.length; i++)
+			{
+				values[i] = float(random(height));
+				states[i] -1;
+			}
+});
+
+$("#algorithms").change(function()
+{
+		var title = $("#algorithms").val();
+		$("#title").text(title);
+		if(title == "Bubble Sort") 
+		{
+			sortMethod = "BubbleSort";
+			$("#body").html(bubbleSortText);
+		}
+		if (title == "Insertion Sort")
+		{
+			$("#body").html(insertionSortText);
+		}
+		if (title == "Selection Sort")
+		{
+			$("#body").html(selectionSortText);
+		}
+		if (title == "Quick Sort")
+		{
+			sortMethod = "Quicksort";
+		}
+	} 
+);
+
 
 async function quicksort(arr, start, end) 
 {
