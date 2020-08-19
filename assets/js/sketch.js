@@ -5,7 +5,7 @@ let values = [];
 let states = []; 
 let elementCount;
 let sorting_speed;
-
+let baseSpeed = 150;
 $(document).ready(function() {
 		sortMethod = "Bubblesort";
 		
@@ -26,7 +26,6 @@ $("#elementCount").on('input', function() {
 		}
 });
 
-// Update Sorting Speed
 $("#sortingSpeed").on('input', function() {
 	if ($("#sortButton").val() == "Sort") {
 		sorting_speed = $(this).val();
@@ -52,21 +51,9 @@ $("#sortButton").click(function() {
 					quicksort(values, 0, values.length);
 				}
 		}
-		else {
+		else 	{
 			$("#sortButton").prop("value", "Sort");
 		}
-		algorithim_value = $("#algorithms").val();
-		$(algorithim_value).text(title);
-		if (algorithim_value == "Bubble Sort")
-		{
-			
-		}
-		else 
-		{
-			
-		}
-
-		console.log($("#algorithms").val());
 	});
 
 
@@ -76,6 +63,11 @@ $("#generateArray").click(function(){
 		$("#generateArray").prop("value", "Regenerate");
 
 	}
+	if( $ ("#sortButton")[0].hasAttribute("disabled") )
+	{
+	    	$("#sortButton").removeAttr('disabled');
+	}
+
 	elementCount = $("#elementCounter").text();
 	elementWidth = (displayWidth / elementCount);
 	values = new Array(floor(width/elementWidth));
@@ -84,6 +76,7 @@ $("#generateArray").click(function(){
 				values[i] = float(random(height));
 				states[i] -1;
 			}
+	loop();
 });
 
 $("#algorithms").change(function()
@@ -92,7 +85,7 @@ $("#algorithms").change(function()
 		$("#title").text(title);
 		if(title == "Bubble Sort") 
 		{
-			sortMethod = "BubbleSort";
+			sortMethod = "Bubblesort";
 			$("#body").html(bubbleSortText);
 		}
 		if (title == "Insertion Sort")
@@ -181,10 +174,17 @@ async function bubblesort(arr, start, end)
 
 function draw() 
 { 
-    if(isSorted(values)) 
+    if(isSorted(values) &&  $("#generateArray").val() == "Regenerate") 
     {
+    	$("#sortButton").prop("value", "Sort");
+    	$("#sortButton").attr('disabled', 'disabled');
     	stroke(0);
+    	for(let i = 0; i < states.length; i++)
+    	{
+    		states[i] = -1;
+    	}
         fill("#00ff00");
+        noLoop();
         background(100);
         for(let i = 0; i < values.length; i++) 
         {
@@ -214,13 +214,12 @@ function draw()
 			rect(i*elementWidth, height - values[i], elementWidth, values[i]); 
 		} 
 	
-     	
 	}
 } 
 
 async function swap(arr, a, b) 
 { 
-	await sleep(25); 
+	await sleep(baseSpeed-sorting_speed); 
 	let tmp = arr[a]; 
 	arr[a] = arr[b]; 
 	arr[b] = tmp; 
