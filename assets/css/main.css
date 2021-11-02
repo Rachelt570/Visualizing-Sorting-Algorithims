@@ -1,0 +1,40 @@
+* {
+	padding: 0px;
+	margin: 0px;
+}
+html {
+	height: 100%;
+}
+body {
+	height: 100%;
+	margin: 0px;
+}
+header {
+	display: grid;
+	justify-content: center;
+	align-items: center;
+	grid-template-areas:
+	"Title" 
+	"Form";
+	margin: auto;
+	height: 10%;
+}
+main {
+	height: 80%;
+}
+footer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: auto;
+	height: 10%;
+}
+h1 {
+	grid-area: Title;
+	display: block;
+	width = 100%;
+}
+form {
+	grid-area: Form;
+	display: block;
+}
