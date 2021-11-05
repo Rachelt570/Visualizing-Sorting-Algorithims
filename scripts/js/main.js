@@ -98,37 +98,54 @@ function swap(array, x, y)
 }
 function bubbleSort()
 {
-	background(backgroundColor);
-	drawElements(0, elementCount)
-	savedIndex = -1;
-	sortedIndex = -1;
-	bubbleIndex = bubbleSortVisualization(bubbleIndex);
-	if(sortedIndex != -1 && savedIndex != -1)
+	if(!isSorted(elements))
 	{
-		drawElement(savedIndex, color(255, 0, 0), color(255));
-		drawElement(sortedIndex, color(255, 0, 0), color(255));
-		swap(elements, sortedIndex, savedIndex);
-	}
-}
-
-function bubbleSortVisualization(index)
-{
-	if(index < elementCount-1)
-	{
-		for(let i = index; i < elementCount-1; i++)
+		background(backgroundColor);
+		drawElements(0, elementCount);
+		savedIndex = bubbleSortVisualization(savedIndex);
+		if(preparedSwap)
 		{
-			if(elements[i] > elements[i+1]) 
-			{
-			  sortedIndex = i;
-			  savedIndex = i+1;
-			  return index+1;
-			}
+			drawElements(0, elementCount);
+			drawElement(savedIndex-1, color(255,0,0), color(255));
+			drawElement(savedIndex, color(255,0,0), color(255));
+			swap(elements,savedIndex-1, savedIndex);
+			savedIndex++;
 		}
 	}
 	else
 	{
-		return 0;
+		background(backgroundColor);
+		drawElements(0, elementCount, color(0,255,0));
 	}
+}
+
+
+function bubbleSortVisualization(index)
+{
+	preparedSwap = false;
+	if(index < elementCount-1)
+	{
+		for(let i = index; i < elementCount-1; i++)
+		{
+			if(elements[i] > elements[i+1])
+			{
+				background(backgroundColor);
+				drawElements(0, elements);
+				drawElement(i, color(255,0,0), color(255));
+				drawElement(i + 1,color(255,0,0), color(255));
+				preparedSwap = true;
+				return i+1;
+			}
+			else
+			{
+				background(backgroundColor);
+				drawElements(0, elementCount);
+				drawElement(i, color(0,0,255), color(255));
+				return i+1;
+			}
+		}
+	}
+	return 0;
 }
 function insertionSort()
 {
