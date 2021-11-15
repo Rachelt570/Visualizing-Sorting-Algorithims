@@ -1,6 +1,4 @@
 
-
-
 let canvas;
 
 const Settings = {
@@ -83,18 +81,11 @@ const Settings = {
 	get elementCount() {
 		return this._elementCount;
 	}
-
 }
 
 let elements = [];
  
-let sortedIndex = 0; 
 
-let savedIndex = 0;
-var bubbleIndex = 0;
-let savedMinimumValue = 10000;
-let savedMinimumIndex = 0;
-let preparedSwap = false;
 
 
 
@@ -174,112 +165,6 @@ function swap(array, x, y)
 	array[y] = tmp;
 }
 
-function bubbleSort()
-{
-	if(!isSorted(elements))
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount);
-		savedIndex = bubbleSortVisualization(savedIndex);
-		if(preparedSwap)
-		{
-			drawElements(0, Settings.elementCount);
-			drawElement(savedIndex-1, color(255,0,0), color(255));
-			drawElement(savedIndex, color(255,0,0), color(255));
-			swap(elements,savedIndex-1, savedIndex);
-			savedIndex++;
-		}
-	}
-	else
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount, color(0,255,0));
-	}
-}
-
-function bubbleSortVisualization(index)
-{
-	preparedSwap = false;
-	if(index < Settings.elementCount-1)
-	{
-		for(let i = index; i < Settings.elementCount-1; i++)
-		{
-			if(elements[i] > elements[i+1])
-			{
-				background(Settings.backgroundColor);
-				drawElements(0, elements);
-				drawElement(i, color(255,0,0), color(255));
-				drawElement(i + 1,color(255,0,0), color(255));
-				preparedSwap = true;
-				return i+1;
-			}
-			else
-			{
-				background(Settings.backgroundColor);
-				drawElements(0, Settings.elementCount);
-				drawElement(i, color(0,0,255), color(255));
-				return i+1;
-			}
-		}
-	}
-	return 0;
-}
-
-function insertionSort()
-{
-
-	if(!isSorted(elements))
-	{
-		if(sortedIndex === 0 && savedIndex === 0)
-	{
-		savedIndex = 1;
-		index = 1;
-	}
-		insertionSortVisualization();
-	}
-	else
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount, color(0,255,0), color(255));
-	}
-
-
-}
-
-
-// DELETE THIS SHIT AND FIX THE GLOBAL ISSUE, THIS IS RIDICLOUS AND OF COURSE IT DOESNT WORK
-function insertionSortVisualization()
-{
-
-	if(savedIndex <= 0)
-	{
-		sortedIndex++;
-		savedIndex = sortedIndex;
-		return;
-
-	}
-	if(elements[savedIndex-1] > elements[savedIndex])
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount);
-		drawElement(savedIndex-1, color(255, 0, 0), color(255));
-		drawElement(savedIndex, color(255, 0, 0), color(255));
-		swap(elements, savedIndex-1, savedIndex);
-		savedIndex++;
-		return;
-	}
-	else 
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount);
-		drawElement(savedIndex, color(0,0,255), color(255));
-		sortedIndex++;
-		savedIndex = index;
-		return;
-
-	}
-}
-
 function resetDraw() 
 {
 	background(Settings.backgroundColor);
@@ -297,10 +182,146 @@ function drawElement(index, color, oldColor)
 
 function drawElements(start, end, c = color(255), oc = color(255))
 {
-	for(let i = start; i < end; i++) 
+	for(let i = start; i <= end; i++) 
 		{ 
 			 drawElement(i, c, oc);
 		}
+}
+
+
+
+function isSorted(array) 
+{
+	for (let i = 0; i < array.length - 1; i++) 
+	{
+   	 	if (array[i] > array[i+1])
+       	{
+       	 	return false;
+   		}
+	}
+	return true;
+}
+
+
+// Iterate through the array 0 - x-2
+// If X > X+1 
+// Swap (X, X+1)
+// Repeat until no swaps
+
+
+
+const Visuals =
+{
+
+	drawComplete: function (i, n)	
+	{
+		if(typeof n !== "undefined")
+		{
+			drawElements(i, n, color(0,255,0), color(255));
+		}
+		else
+		{
+			drawElement(i, color(0, 255, 0), color(255));
+		}
+		return;
+	},
+	drawHit: function (i, n)
+	{
+		if(typeof n !== "undefined")
+		{
+			drawElements(i, n, color(255, 255, 0), color(255));
+		}
+		else
+		{
+			drawElement(i, color(255, 255, 0), color(255));
+		}
+		return;
+	},
+
+	drawSwap: function (i, n)
+	{
+		drawElement(i, color(255,0,0), color(255));
+		drawElement(n, color(255,0,0), color(255));
+		return;
+	},
+	drawScan: function (i, n)
+	{
+		if(typeof n !== "undefined")
+		{
+			drawElements(i, n, color(0,0,255), color(255));
+		}
+		else
+		{
+			drawElement(i, color(0,0,255), color(255));
+		}
+		return;
+	}
+
+}
+
+class BubbleSort
+{
+	
+	constructor()
+	{
+		this.hasSwapped = true;
+		this.index = 0;
+	}
+
+	drawComplete()
+	{
+		background(Settings.backgroundColor);
+		Visuals.drawComplete(0, Settings.elementCount-1);
+	}
+
+	drawSwap()
+	{
+		background(Settings.backgroundColor);
+		drawElements(0, Settings.elementCount-1);
+		Visuals.drawSwap(this.index, this.index+1);
+	}
+
+	drawScan()
+	{
+		background(Settings.backgroundColor);
+		drawElements(0, Settings.elementCount-1);
+		Visuals.drawScan(this.index);
+	}
+
+	sort() 
+	{
+		if(this.index >= Settings.elementCount)
+		{	
+			if(this.hasSwapped === true)
+			{
+				this.index = 0;
+				this.hasSwapped = false;
+			}
+			else
+			{
+				this.drawComplete();
+				return;
+			}
+		}
+
+		if(elements[this.index] > elements[this.index+1])
+		{
+			this.drawSwap();
+			swap(elements, this.index, this.index+1);
+			this.hasSwapped = true;
+			this.index++;
+			return;
+		}
+
+		else
+		{
+			this.drawScan();
+			this.index++;
+			return;
+				
+		}
+	
+	}
 }
 
 class SelectionSort {
@@ -324,35 +345,34 @@ class SelectionSort {
 	drawSwap()
 	{
 		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount);
-		drawElements(0, this.outsideIndex, color(0, 255,0), color(255));
-		drawElement(this.outsideIndex, color(255,0,0), color(255));
-		drawElement(this.minimumIndex, color(255,0,0), color(255));
+		drawElements(0, Settings.elementCount-1);
+		Visuals.drawComplete(0, this.outsideIndex);
+		Visuals.drawSwap(this.outsideIndex, this.minimumIndex);
 	}
 
 	drawHit() 
 	{
 		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount);
-		drawElements(0, this.outsideIndex, color(0, 255,0), color(255));
-		drawElement(this.insideIndex, color(255,255,0), color(255))
-		drawElement(this.outsideIndex, color(0, 255, 0), color(255));
-	}
+		drawElements(0, Settings.elementCount-1);
+		Visuals.drawComplete(0, this.outsideIndex-1);
+		Visuals.drawHit(this.insideIndex);
+		Visuals.drawComplete(this.outsideIndex);
+	}	
 
 	drawScan() 
 	{
 		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount);
-		drawElements(0, this.outsideIndex, color(0, 255,0), color(255));
-		drawElement(this.minimumIndex, color(255, 255, 0), color(255));
-		drawElement(this.insideIndex, color(0,0,255), color(255));
-		drawElement(this.outsideIndex, color(0, 255, 0), color(255));
+		drawElements(0, Settings.elementCount-1);
+		Visuals.drawComplete(0, this.outsideIndex-1);
+		Visuals.drawHit(this.minimumIndex);
+		Visuals.drawScan(this.insideIndex);
+		Visuals.drawComplete(this.outsideIndex);
 	}
 
 	drawComplete()
 	{
 		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount, color(0,255,0), color(255));
+		Visuals.drawComplete(0, Settings.elementCount=1);
 	}
 	
 	sort()
@@ -391,20 +411,56 @@ class SelectionSort {
 		}
 	}
 }
-function isSorted(array) 
-{
-	for (let i = 0; i < array.length - 1; i++) 
+
+class InsertionSort {
+
+	constructor()
 	{
-   	 	if (array[i] > array[i+1])
-       	{
-       	 	return false;
-   		}
+		this.marker = 1;
+		this.unsortedIndex = 1;
 	}
-	return true;
+	drawComplete() 
+	{
+		background(Settings.backgroundColor);
+		Visuals.drawComplete(0, Settings.elementCount-1);
+	}
+	drawHit()
+	{
+
+	}
+	drawSwap()
+	{
+		Visuals.drawSwap(this.marker, this.marker-1);
+	}
+	sort()
+	{	
+		
+		if(elements[this.marker] <=	elements[this.marker-1])
+		{
+			background(Settings.backgroundColor);
+			drawElements(0, Settings.elementCount);
+			this.drawSwap();
+			swap(elements, this.marker, this.marker-1);
+			this.marker--;
+		}
+		else
+		{
+			if(this.unsortedIndex < Settings.elementCount-1) 
+			{
+				this.unsortedIndex++;
+				this.marker = this.unsortedIndex;
+			}
+			else
+			{
+				this.drawComplete();
+			}
+		}
+	}		
 }
 
-
 let SelectionSorter = new SelectionSort();
+let BubbleSorter = new BubbleSort();
+let InsertionSorter = new InsertionSort();
 
 function draw() 
 {
@@ -420,11 +476,11 @@ function draw()
 			}
 			if(Settings.sortType == "BubbleSort")
 			{
-				bubbleSort();
+				BubbleSorter.sort();
 			}
 			if(Settings.sortType == "InsertionSort")
 			{
-				insertionSort();
+				InsertionSorter.sort();
 			}
 			
 		}
