@@ -188,8 +188,6 @@ function drawElements(start, end, c = color(255), oc = color(255))
 		}
 }
 
-
-
 function isSorted(array) 
 {
 	for (let i = 0; i < array.length - 1; i++) 
@@ -202,11 +200,6 @@ function isSorted(array)
 	return true;
 }
 
-
-// Iterate through the array 0 - x-2
-// If X > X+1 
-// Swap (X, X+1)
-// Repeat until no swaps
 
 
 
@@ -252,13 +245,142 @@ const Visuals =
 		}
 		else
 		{
-			drawElement(i, color(0,0,255), color(255));
+				drawElement(i, color(0,0,255), color(255));
 		}
 		return;
 	}
 
 }
 
+class QuickSort
+{
+	constructor()
+	{
+		this.PartitionScheme = "lomuto";
+		this.stack = []; 
+		this.top = -100;
+		this.pivot = 0;
+		this.partition = 0;
+
+		this.isParting = false;
+		this.i = 0;
+		this.n = 0;
+	}
+	hoarePartition(array, start, end)
+	{
+	
+	}
+
+	iterativeQuicksort(array,start,end)
+	{
+		
+		//If this is the first time ran
+		if (this.top == -100)
+		{
+			this.top = -1;
+			this.stack[++this.top] = start;	
+			this.stack[++this.top] = end;
+			this.n = start;
+			this.i = start-1;
+		}
+		
+		if (this.top >= 0) 
+		{
+
+			end = this.stack[this.top--];
+			start = this.stack[this.top--];
+			if(this.pivot == -1)
+			{
+				start = this.n;
+			}
+			this.pivot = this.lomutoPartition(array, start, end);
+			if(this.pivot == -1)
+			{
+				this.stack[++this.top] = start;
+				this.stack[++this.top] = end;
+				return;
+			}
+			if (this.pivot - 1 > start) 
+			{
+				this.stack[++this.top] = start;
+				this.stack[++this.top] = this.pivot - 1;
+			}
+
+			if (this.pivot + 1 < end) 
+			{
+				this.stack[++this.top] = this.pivot + 1;
+				this.stack[++this.top] = end;
+			}
+
+
+		}
+
+	}
+		
+	
+	lomutoQuicksort(array, start, end)
+	{
+		let partition;
+		if(start >= 0 && end >= 0 && start < end)
+		{
+			partition = this.lomutoPartition(array, start, end);
+			this.lomutoQuicksort(array, start, partition-1);
+			this.lomutoQuicksort(array, partition+1, end);
+		}
+	}
+	lomutoPartition(array, start, end)
+	{
+		console.log("start " + start);
+		console.log("end" + end);
+		console.log("I " + this.i);
+		background(Settings.backgroundColor);
+		drawElements(0, Settings.elementCount);
+		if (!this.isParting)
+		{
+			this.pivot = array[end];
+			this.i = start-1;
+			this.n = start;
+			this.isParting = true;
+		}
+		
+		if(this.n <= end-1)
+		{
+			if(array[this.n] <= this.pivot)
+			{
+				this.i++;
+				background(Settings.backgroundColor);
+				drawElements(0, Settings.elementCount);
+				Visuals.drawSwap(this.i, this.n);
+				swap(array, this.i, this.n);
+			}
+			this.n++;
+			return -1;
+		}
+		swap(array[this.i+1], array[end]);
+		this.isParting = false;
+		this.n = 0;
+		return this.i+1;
+
+	}
+	// Get partition
+	sort()
+	{
+		
+		
+		if(this.PartitionScheme =="lomuto")
+		{
+			this.iterativeQuicksort(elements, 0, Settings.elementCount-1);
+		}
+		if(isSorted(elements))
+		{
+			background(Settings.backgroundColor);
+			Visuals.drawComplete(0, Settings.elementCount);
+		}
+	
+		
+	}
+
+}
 class BubbleSort
 {
 	
@@ -461,7 +583,7 @@ class InsertionSort {
 let SelectionSorter = new SelectionSort();
 let BubbleSorter = new BubbleSort();
 let InsertionSorter = new InsertionSort();
-
+let QuickSorter = new QuickSort();
 function draw() 
 {
 	//resetDraw();
@@ -481,6 +603,10 @@ function draw()
 			if(Settings.sortType == "InsertionSort")
 			{
 				InsertionSorter.sort();
+			}
+			if(Settings.sortType == "QuickSort")
+			{
+				QuickSorter.sort();
 			}
 			
 		}
