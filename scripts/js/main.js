@@ -1,8 +1,68 @@
-
 let canvas;
 
-const Settings = {
 
+function resetDraw() 
+{
+	background(Settings.backgroundColor);
+	Settings.lineThickness = floor(Settings.width/Settings.elementCount); //Set thickness based on elementCount
+	stroke(1); //Arbitary
+	Settings.leftPadding =  (Settings.width - (Settings.elementCount * Settings.lineThickness)) * 0.5;
+}
+
+function sortTypeUpdate(newSortType)
+{
+	Settings.sortType = newSortType;
+}
+
+function elementCountUpdate(newElementCount)
+{
+	Settings.elementCount = newElementCount;
+	Data.elements = [];
+	Data.states = [];
+	for(let i = 0; i < Settings.elementCount; i++)
+	{
+		Data.elements.push(Utilities.getRandomInt(Settings.height, 5));
+		Data.states.push(0);
+
+	}
+		Visuals.drawElements(0, Settings.elementCount);
+		resetDraw();
+}
+
+function frameRateUpdate(newFrameRate)
+{
+	Settings.framesPerUpdate = floor(60-newFrameRate) + 1;
+}
+
+function executeSort() 
+{
+	Settings.sortExecution = true;
+	if(Settings.sortType == "BubbleSort") 
+	{
+		Sorting.BubbleSort(Data.elements, 0, Data.elements.length);
+	}
+	if(Settings.sortType == "SelectionSort")
+	{
+		Sorting.SelectionSort(Data.elements, 0, Data.elements.length);
+	}
+	if(Settings.sortType == "QuickSort")
+	{
+		Sorting.QuickSort(Data.elements, 0, Data.elements.length-1);
+	}
+	if(Settings.sortType == "InsertionSort")
+	{
+		Sorting.InsertionSort(Data.elements, 0, Data.elements.length);
+	}
+}		
+
+let Data = 
+{
+ 	states: [],
+ 	elements: [],
+};
+
+let Settings = 
+{
 	_elementCount: 50, 
 	_FPS: 60, 
 	_sortType: "BubbleSort",
@@ -10,7 +70,6 @@ const Settings = {
 	_leftPadding: 0,
 	_backgroundColor: 100,
 	_framesPerUpdate: 10,
-	_sortExecution: false,
 
 	set _sortExecution(isSortExecution)
 	{
@@ -81,67 +140,245 @@ const Settings = {
 	get elementCount() {
 		return this._elementCount;
 	}
-}
-
-let elements = [];
- 
 
 
-
-
-function sortTypeUpdate(newSortType)
+};
+let Utilities = 
 {
-	Settings.sortType = newSortType;
-}
-function elementCountUpdate(newElementCount)
-{
-	Settings.elementCount = newElementCount;
-	elements = [];
-	resetState();
-	for(let i = 0; i < Settings.elementCount; i++)
+	getRandomInt(max, min) 
 	{
-		elements[i] = max(getRandomInt(height), 5);
+		return Math.floor(Math.random() * max) + min;
+	},
+	async aSwap(array, firstIndex, secondIndex)
+	{
+		tmp = array[firstIndex];
+		array[firstIndex] = array[secondIndex];
+		array[secondIndex] = tmp;
+		return;
+	},
+
+	timeout(ms) {
+  	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
-		resetDraw();
-		drawElements(0, Settings.elementCount);
+
 }
 
-function frameRateUpdate(newFrameRate)
+let Visuals = 
 {
-	Settings.framesPerUpdate = floor(60-newFrameRate) + 1;
+	_defaultValue: 0,
+	_accessValue: 1,
+	_swapValue: 2,
+	_saveValue: 3, 
+	_completeValue: 4,
+
+	get defaultValue()
+	{
+		return this._defaultValue;
+	},
+	get accessValue()
+	{
+		return this._accessValue;
+	},
+	get swapValue()
+	{
+		return this._swapValue;
+	},
+	get saveValue()
+	{
+		return this._saveValue;
+	},
+	get completeValue()
+	{
+		return this._completeValue;
+	},
+	drawElement(array, index, color, oldColor)
+	{
+		fill(color);
+		rect(Settings.leftPadding + Settings.lineThickness * index, Settings.height-array[index], Settings.lineThickness, array[index]);
+		fill(oldColor);
+	},
+	drawElements(array, startIndex, endIndex, color, oldColor)
+	{
+		for(let i = startIndex; i < endIndex; i++)
+		{
+			Visuals.drawElement(array, i, color, oldColor);
+		}
+	},
+	drawDefault(array, index)
+	{
+		Visuals.drawElement(array, index, color(255), color(255));
+	},
+	drawComplete(array, index)
+	{
+		Visuals.drawElement(array, index, color(0, 255, 0), color(255));
+	},
+	drawSwap(array, index)
+	{
+		Visuals.drawElement(array, index, color(255, 0, 0), color(255));
+	},
+	drawAccess(array, index)
+	{
+		Visuals.drawElement(array, index, color(0, 0, 255), color(255));
+	},
+	drawSave(array, index)
+	{
+		Visuals.drawElement(array, index, color(255, 255, 0), color(255));
+	},
+	refreshBackground()
+	{
+		background(Settings.backgroundColor);
+	}
 }
 
-function executeSort() 
+let Sorting = 
 {
-	Settings.sortExecution = true;
+	async BubbleSort(array, start, end)
+	{
+		if(start > end || (start < 0 || end < 0))
+		{
+			return 1;
+		}
+		for(let i = start; i < end-1; i++)
+		{
+			for(let n = start; n < end-i-1; n++)
+			{
+				Data.states[n] = Visuals.accessValue;
+				Data.states[n+1] = Visuals.accessValue;
+				await Utilities.timeout(40);
+
+				if(array[n] > array[n+1])
+				{
+					Data.states[n] = Visuals.swapValue;
+					Data.states[n+1] = Visuals.swapValue;
+					await Utilities.timeout(40);
+					Utilities.aSwap(array, n, n+1);
+				}				
+				Data.states[n] = Visuals.defaultValue;
+				Data.states[n+1] = Visuals.defaultValue;
+			}
+			Data.states[end-1-i] = Visuals.completeValue;
+		}
+		return 0;
+	},
+	async SelectionSort(array, start, end)
+	{
+		let minimumIndex;
+ 		for(let i = start; i < end; i++)
+ 		{
+ 			minimumIndex = i;
+ 			for(let n = i+1; n < end; n++)
+ 			{
+ 				Data.states[n] = Visuals.accessValue;
+ 				Data.states[minimumIndex] = Visuals.saveValue;
+ 				await Utilities.timeout(40);
+ 				if(array[n] < array[minimumIndex])
+ 				{
+ 					Data.states[minimumIndex] = Visuals.defaultValue;
+ 					Data.states[n] = Visuals.saveValue;
+ 					minimumIndex = n;
+ 				}
+ 				else
+ 				{
+ 					Data.states[n] = Visuals.defaultValue;
+ 				}
+ 				await Utilities.timeout(40);
+ 			}
+ 			Data.states[i] = Visuals.swapValue;
+ 			Data.states[minimumIndex] = Visuals.swapValue;
+ 			await Utilities.timeout(40);
+ 			Utilities.aSwap(array, i, minimumIndex);
+ 			Data.states[minimumIndex] = Visuals.defaultValue;
+ 			Data.states[i] = Visuals.completeValue;
+ 		}
+	}, 
+	async QuickSort(array, start, end)
+	{
+		if (start >= end) 
+		{
+			return;
+		}
+		let part = await Sorting.LomutoPartition(array, start, end);
+
+		await Promise.all([
+				Sorting.QuickSort(array, start, part -1),
+				Sorting.QuickSort(array, part + 1, end)
+			]);
+
+	},
+	async LomutoPartition(array, start, end)
+	{
+		let pivotIndex = start;
+		let pivot = array[end];
+		Data.states[start] = Visuals.saveValue;
+		Data.states[end] = Visuals.saveValue;
+		for(let i = start; i < end; i++) 
+		{
+			Data.states[i] = Visuals.accessValue;
+			await Utilities.timeout(100);
+			if(array[i] < pivot)
+			{
+				Data.states[i] = Visuals.swapValue;
+				Data.states[pivotIndex] = Visuals.swapValue;
+				await Utilities.timeout(200);
+				await Utilities.aSwap(array, i, pivotIndex);
+				Data.states[pivotIndex] = Visuals.defaultValue;
+				pivotIndex++;
+			}
+			Data.states[i] = Visuals.defaultValue;
+		}
+
+		Data.states[pivotIndex] = Visuals.swapValue;
+		Data.states[end] = Visuals.swapValue;
+		await Utilities.timeout(200);
+		await Utilities.aSwap(array, pivotIndex, end);
+		Data.states[pivotIndex] = Visuals.defaultValue;
+		Data.states[start] = Visuals.defaultValue;
+		Data.states[end] = Visuals.defaultValue;
+		return pivotIndex;
+	},
+	async InsertionSort(array, start, end)
+	{
+		let n;
+		for(let i = start+1; i < end; i++)
+		{
+
+			let value = array[i];
+			Data.states[i] = Visuals.saveValue;
+			await Utilities.timeout(40);
+			n = i -1;
+			while(n >= 0 && array[n] > value)
+			{
+				Data.states[n+1] = Visuals.swapValue;
+				Data.states[n] = Visuals.swapValue;
+				await Utilities.timeout(40);
+				await Utilities.aSwap(array, n+1, n);
+				Data.states[n] = Visuals.defaultValue;
+				Data.states[n+1] = Visuals.defaultValue;
+				Data.states[i] = Visuals.saveValue;
+				await Utilities.timeout(40);
+				n = n-1;
+
+			}
+			Data.states[n+1] = Visuals.swapValue;
+			Data.states[i] = Visuals.swapValue;
+			await Utilities.timeout(40);
+
+			array[n+1] = value;	
+			Data.states[n+1] = Visuals.defaultValue;
+			Data.states[i] = Visuals.defaultValue;
+
+		}
+	}
 }
-
-function resetState() 
-{
-	savedIndex = 0;
-	savedMinimumValue = 10000;
-	savedMinimumIndex = 0;
-	fill(255);
-	sortedIndex = 0;
-
-}
-
-function getRandomInt(max) 
-{
-  return Math.floor(Math.random() * max);
-}
-
 function windowResized() 
 {
 	height = $("#main").height();
 	width = $("#main").width();
 	resizeCanvas(width, height);
-	background(Settings.backgroundColor);		
-	savedMinimumValue = elements[savedIndex];
+	Visuals.refreshBackground();		
 
 	//Reset sort algo
 }
-
 function setup()
 {
 	frameRate(60);
@@ -154,462 +391,38 @@ function setup()
 	background(Settings.backgroundColor);
 	for(let i = 0; i < Settings.elementCount; i++)
 	{
-		elements[i] = max(getRandomInt(Settings.Height), 5);
-	}
-	resetDraw(); 	
-}
-function swap(array, x, y)
-{
-	let tmp = array[x];
-	array[x] = array[y];
-	array[y] = tmp;
-}
-
-function resetDraw() 
-{
-	background(Settings.backgroundColor);
-	Settings.lineThickness = floor(Settings.width/Settings.elementCount); //Set thickness based on elementCount
-	stroke(1); //Arbitary
-	Settings.leftPadding =  (Settings.width - (Settings.elementCount * Settings.lineThickness)) * 0.5;
-}
-
-function drawElement(index, color, oldColor)
-{
-	fill(color);
-	rect(Settings.leftPadding + Settings.lineThickness * index, Settings.height-elements[index], Settings.lineThickness, elements[index]);
-	fill(oldColor);
-}
-
-function drawElements(start, end, c = color(255), oc = color(255))
-{
-	for(let i = start; i <= end; i++) 
-		{ 
-			 drawElement(i, c, oc);
-		}
-}
-
-function isSorted(array) 
-{
-	for (let i = 0; i < array.length - 1; i++) 
-	{
-   	 	if (array[i] > array[i+1])
-       	{
-       	 	return false;
-   		}
-	}
-	return true;
-}
-
-
-
-
-const Visuals =
-{
-
-	drawComplete: function (i, n)	
-	{
-		if(typeof n !== "undefined")
-		{
-			drawElements(i, n, color(0,255,0), color(255));
-		}
-		else
-		{
-			drawElement(i, color(0, 255, 0), color(255));
-		}
-		return;
-	},
-	drawHit: function (i, n)
-	{
-		if(typeof n !== "undefined")
-		{
-			drawElements(i, n, color(255, 255, 0), color(255));
-		}
-		else
-		{
-			drawElement(i, color(255, 255, 0), color(255));
-		}
-		return;
-	},
-
-	drawSwap: function (i, n)
-	{
-		drawElement(i, color(255,0,0), color(255));
-		drawElement(n, color(255,0,0), color(255));
-		return;
-	},
-	drawScan: function (i, n)
-	{
-		if(typeof n !== "undefined")
-		{
-			drawElements(i, n, color(0,0,255), color(255));
-		}
-		else
-		{
-				drawElement(i, color(0,0,255), color(255));
-		}
-		return;
-	}
-
-}
-
-class QuickSort
-{
-	constructor()
-	{
-		this.PartitionScheme = "lomuto";
-		this.stack = []; 
-		this.top = -100;
-		this.pivot = 0;
-		this.partition = 0;
-
-		this.isParting = false;
-		this.i = 0;
-		this.n = 0;
-	}
-	hoarePartition(array, start, end)
-	{
-	
-	}
-
-	iterativeQuicksort(array,start,end)
-	{
-		
-		//If this is the first time ran
-		if (this.top == -100)
-		{
-			this.top = -1;
-			this.stack[++this.top] = start;	
-			this.stack[++this.top] = end;
-			this.n = start;
-			this.i = start-1;
-		}
-		
-		if (this.top >= 0) 
-		{
-
-			end = this.stack[this.top--];
-			start = this.stack[this.top--];
-			if(this.pivot == -1)
-			{
-				start = this.n;
-			}
-			this.pivot = this.lomutoPartition(array, start, end);
-			if(this.pivot == -1)
-			{
-				this.stack[++this.top] = start;
-				this.stack[++this.top] = end;
-				return;
-			}
-			if (this.pivot - 1 > start) 
-			{
-				this.stack[++this.top] = start;
-				this.stack[++this.top] = this.pivot - 1;
-			}
-
-			if (this.pivot + 1 < end) 
-			{
-				this.stack[++this.top] = this.pivot + 1;
-				this.stack[++this.top] = end;
-			}
-
-
-		}
-
-	}
-		
-	
-	lomutoQuicksort(array, start, end)
-	{
-		let partition;
-		if(start >= 0 && end >= 0 && start < end)
-		{
-			partition = this.lomutoPartition(array, start, end);
-			this.lomutoQuicksort(array, start, partition-1);
-			this.lomutoQuicksort(array, partition+1, end);
-		}
-	}
-	lomutoPartition(array, start, end)
-	{
-		console.log("start " + start);
-		console.log("end" + end);
-		console.log("I " + this.i);
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount);
-		if (!this.isParting)
-		{
-			this.pivot = array[end];
-			this.i = start-1;
-			this.n = start;
-			this.isParting = true;
-		}
-		
-		if(this.n <= end-1)
-		{
-			if(array[this.n] <= this.pivot)
-			{
-				this.i++;
-				background(Settings.backgroundColor);
-				drawElements(0, Settings.elementCount);
-				Visuals.drawSwap(this.i, this.n);
-				swap(array, this.i, this.n);
-			}
-			this.n++;
-			return -1;
-		}
-		swap(array[this.i+1], array[end]);
-		this.isParting = false;
-		this.n = 0;
-		return this.i+1;
-
-	}
-	// Get partition
-	sort()
-	{
-		
-		
-		if(this.PartitionScheme =="lomuto")
-		{
-			this.iterativeQuicksort(elements, 0, Settings.elementCount-1);
-		}
-		if(isSorted(elements))
-		{
-			background(Settings.backgroundColor);
-			Visuals.drawComplete(0, Settings.elementCount);
-		}
-	
-		
-	}
-
-}
-class BubbleSort
-{
-	
-	constructor()
-	{
-		this.hasSwapped = true;
-		this.index = 0;
-	}
-
-	drawComplete()
-	{
-		background(Settings.backgroundColor);
-		Visuals.drawComplete(0, Settings.elementCount-1);
-	}
-
-	drawSwap()
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount-1);
-		Visuals.drawSwap(this.index, this.index+1);
-	}
-
-	drawScan()
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount-1);
-		Visuals.drawScan(this.index);
-	}
-
-	sort() 
-	{
-		if(this.index >= Settings.elementCount)
-		{	
-			if(this.hasSwapped === true)
-			{
-				this.index = 0;
-				this.hasSwapped = false;
-			}
-			else
-			{
-				this.drawComplete();
-				return;
-			}
-		}
-
-		if(elements[this.index] > elements[this.index+1])
-		{
-			this.drawSwap();
-			swap(elements, this.index, this.index+1);
-			this.hasSwapped = true;
-			this.index++;
-			return;
-		}
-
-		else
-		{
-			this.drawScan();
-			this.index++;
-			return;
-				
-		}
-	
+		Data.elements.push(Utilities.getRandomInt(Settings.height, 5));
+		Data.states.push(0);
 	}
 }
 
-class SelectionSort {
 
-	constructor()
-	{
-		this._outsideIndex = 0;
-		this._insideIndex = 0;
-		this._minimumIndex = 0;
-
-	}
-
-	set outsideIndex(newOutsideIndex) { this._outsideIndex = newOutsideIndex;}
-	get outsideIndex(){return this._outsideIndex;}
-	set insideIndex(newInsideIndex){this._insideIndex = newInsideIndex;}
-	get insideIndex() {return this._insideIndex;}
-	set minimumIndex(newMinimumIndex) { this._minimumIndex = newMinimumIndex }
-	get minimumIndex() { return this._minimumIndex; }
-	
-
-	drawSwap()
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount-1);
-		Visuals.drawComplete(0, this.outsideIndex);
-		Visuals.drawSwap(this.outsideIndex, this.minimumIndex);
-	}
-
-	drawHit() 
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount-1);
-		Visuals.drawComplete(0, this.outsideIndex-1);
-		Visuals.drawHit(this.insideIndex);
-		Visuals.drawComplete(this.outsideIndex);
-	}	
-
-	drawScan() 
-	{
-		background(Settings.backgroundColor);
-		drawElements(0, Settings.elementCount-1);
-		Visuals.drawComplete(0, this.outsideIndex-1);
-		Visuals.drawHit(this.minimumIndex);
-		Visuals.drawScan(this.insideIndex);
-		Visuals.drawComplete(this.outsideIndex);
-	}
-
-	drawComplete()
-	{
-		background(Settings.backgroundColor);
-		Visuals.drawComplete(0, Settings.elementCount=1);
-	}
-	
-	sort()
-	{
-
-		if(this.outsideIndex > this.elementCount)
-		{
-			this.drawComplete();
-			return;
-		}
-		
-		if(this.insideIndex > Settings.elementCount)
-		{
-			this.drawSwap();
-			swap(elements, this.outsideIndex, this.minimumIndex);
-			this.outsideIndex++;
-			this.insideIndex = this.outsideIndex;
-			this.minimumIndex = this.outsideIndex;
-			return;
-		}
-		else
-		{
-			if(elements[this.insideIndex] <= elements[this.minimumIndex])
-			{
-				this.drawHit();
-				this.minimumIndex = this.insideIndex;
-				this.insideIndex++;
-				return;
-			}
-			else
-			{
-				this.drawScan();
-				this.insideIndex++;
-				return;
-			}
-		}
-	}
-}
-
-class InsertionSort {
-
-	constructor()
-	{
-		this.marker = 1;
-		this.unsortedIndex = 1;
-	}
-	drawComplete() 
-	{
-		background(Settings.backgroundColor);
-		Visuals.drawComplete(0, Settings.elementCount-1);
-	}
-	drawHit()
-	{
-
-	}
-	drawSwap()
-	{
-		Visuals.drawSwap(this.marker, this.marker-1);
-	}
-	sort()
-	{	
-		
-		if(elements[this.marker] <=	elements[this.marker-1])
-		{
-			background(Settings.backgroundColor);
-			drawElements(0, Settings.elementCount);
-			this.drawSwap();
-			swap(elements, this.marker, this.marker-1);
-			this.marker--;
-		}
-		else
-		{
-			if(this.unsortedIndex < Settings.elementCount-1) 
-			{
-				this.unsortedIndex++;
-				this.marker = this.unsortedIndex;
-			}
-			else
-			{
-				this.drawComplete();
-			}
-		}
-	}		
-}
-
-let SelectionSorter = new SelectionSort();
-let BubbleSorter = new BubbleSort();
-let InsertionSorter = new InsertionSort();
-let QuickSorter = new QuickSort();
 function draw() 
 {
-	//resetDraw();
-	//drawElements(0, elementCount-1);
-	if(Settings.sortExecution) 
+	Visuals.refreshBackground();
+	for(let i = 0; i < Data.elements.length; i++)
 	{
-		if(frameCount % Settings.framesPerUpdate == 0) 
+		if(Data.states[i] == 0)
 		{
-			if(Settings.sortType == "SelectionSort")
-			{
-			 	SelectionSorter.sort();
-			}
-			if(Settings.sortType == "BubbleSort")
-			{
-				BubbleSorter.sort();
-			}
-			if(Settings.sortType == "InsertionSort")
-			{
-				InsertionSorter.sort();
-			}
-			if(Settings.sortType == "QuickSort")
-			{
-				QuickSorter.sort();
-			}
-			
+			Visuals.drawDefault(Data.elements, i);
 		}
+		if(Data.states[i] == 1)
+		{
+			Visuals.drawAccess(Data.elements, i);
+		}
+		if(Data.states[i] == 2)
+		{
+			Visuals.drawSwap(Data.elements, i);
+		}
+		if(Data.states[i] == 3)
+		{
+			Visuals.drawSave(Data.elements, i);
+		}
+		if(Data.states[i] == 4)
+		{
+			Visuals.drawComplete(Data.elements, i);
+		}
+
 	}
 }
 
