@@ -12,8 +12,86 @@ function resetDraw()
 function sortTypeUpdate(newSortType)
 {
 	Settings.sortType = newSortType;
+	updateSortInfo(newSortType);
 }
 
+function updateSortInfo(newSortType)
+{
+	updateTitle(newSortType);
+	updatePerformanceInfo(newSortType);
+	updateExampleCode(newSortType);
+
+}
+function updateTitle(newSortType)
+{
+	$("#sortTitle").text($("#sortType option:selected").text());
+}
+
+function updatePerformanceInfo(newSortType)
+{
+	$("#sortPerformanceInfo").empty();
+	if(newSortType === "BubbleSort")
+	{	
+		$("#sortPerformanceInfo").append("<li> Worst Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Average Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Best Case Time: O(n) </li>");
+		$("#sortPerformanceInfo").append("<li> Worst Case Space: O(1) </li>");
+		$("#sortPerformanceInfo").append("<li> Stable: Yes </li>");
+		$("#sortPerformanceInfo").append("<li> In Place: Yes </li>");
+	}
+	if(newSortType === "QuickSort")
+	{
+		$("#sortPerformanceInfo").append("<li> Worst Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Average Case Time: O(n log(n)) </li>");
+		$("#sortPerformanceInfo").append("<li> Best Case Time: O(n log(n)) </li>");
+		$("#sortPerformanceInfo").append("<li> Worst Case Space: O(n) </li>");
+		$("#sortPerformanceInfo").append("<li> Stable: No </li>");
+		$("#sortPerformanceInfo").append("<li> In Place: Yes </li>");
+	}
+	if(newSortType === "SelectionSort")
+	{
+		$("#sortPerformanceInfo").append("<li> Worst Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Average Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Best Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Worst Case Space: O(1) </li>");
+		$("#sortPerformanceInfo").append("<li> Stable: No </li>");
+		$("#sortPerformanceInfo").append("<li> In Place: Yes </li>");
+	}
+	if(newSortType === "InsertionSort")
+	{
+		$("#sortPerformanceInfo").append("<li> Worst Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Average Case Time: O(n<sup>2</sup>) </li>");
+		$("#sortPerformanceInfo").append("<li> Best Case Time: O(n)</li>");
+		$("#sortPerformanceInfo").append("<li> Worst Case Space: O(1) </li>");
+		$("#sortPerformanceInfo").append("<li> Stable: Yes </li>");
+		$("#sortPerformanceInfo").append("<li> In Place: Yes </li>");
+	}
+}
+
+function updateExampleCode(newSortType)
+{
+
+		$("#CodeExample").empty()
+
+	if(newSortType === "BubbleSort")
+	{
+
+		$("#CodeExample").append("<pre> \n <code> \nFunction BubbleSort(array, start, end)\n{\n\tif(start > end || (start < 0 || end < 0))\n\t//Return if out of bounds or if the start and end indexes are in the wrong order\n\t{\n\t\treturn;\n\n\t}\n\tfor(let i = start; i < end-1; i++)\n\t{\n\t\tfor(let n = start; n < end-i-1; n++)\n\t\t{\t\n\t\t\tif(array[n] > array[n+1]\n\t\t\t{\n\t\t\t\tswap(array[n], array[n+1]);\n\t\t\t}\n\t\t}\n\t}\n\n}\n\n </code> </pre>");
+	}
+    if(newSortType === "QuickSort") 
+    {
+    	$("#CodeExample").append("<pre> \n <code> \nFunction QuickSort(array, start, end)\n{\n\tif(start >= end)\n\t{\n\t\treturn;\n\t}\n\tvar.partition = Partition(array, start, end);\n\tQuickSort(array, start, partition-1);\n\tQuickSort(array, partition+1, end);\n\n}\t\n\nFunction Partition(array, start, end)\n{\n\tvar pivotIndex = start;\n\tvar pivot = array[end];\n\tfor(var i = start; i < end; i++0\n\t{\n\t\tif(array[i] <  pivot)\n\t\t{\n\t\t\tif(i !pivotIndex)\n\t\t\t{\n\t\t\t\tswap(array[i], array[pivotIndex]);\n\t\t\t}\n\t\t\tpivotIndex++;\n\t\t}\n\t}\n\tif(pivotIndex != end)\n\t{\t\n\t\tswap(array[pivotIndex], array[end]);\n\t}\n\treturn pivotIndex;\n\n}	</code> </pre>");
+
+    }
+    if(newSortType === "SelectionSort")
+    {
+    	$("#CodeExample").append("<pre> \n <code> \nFunction SelectionSort(array, start, end)\n{\n\tif(start > end || (start < 0 || end < 0))\n\t//Return if out of bounds or if the start and end indexes are in wrong order\n\t{\n\t\treturn;\n\t}\n\tvar minimumIndex;\n\tfor(var i = start; i < end; i++)\n\t{\t\n\t\tvar minimumIndex;\n\t\tfor(var n = i+1; n < end; n++)\n\t\t{\t\t\n\t\t\tif(array[n] < array[minimumIndex])\n\t\t\t{\n\t\t\t\tminimumIndex = n;\n\t\t\t}\n\t\t}\n\t\tswap(array[i], array[minimumIndex]);\n\t}\n}\n\n </code> </pre>");
+    }
+    if(newSortType === "InsertionSort")
+    {
+    	$("#CodeExample").append("<pre> \n <code>Function InsertionSort(array, start, end)\n{\n\tif(start > end || (start < 0 || end < 0))\n\t//Return if out of bounds or if the start and end indexes are in wrong order\n\t{\n\t\treturn;\n\t}\n\tvar n;\n\tfor(var i = start + 1; start < end; i++)\n\t{\n\t\tvar value = array[i];\n\t\tn = i - 1;\n\t\twhile(n >= 0 && array[n] > value)\n\t\t{\n\t\t\tswap(array, n+1, n);\n\t\t\tn = n - 1;\n\t\t}\n\t\tarray[n+1] = value;\n\t}\n}\n\n </code> </pre>");
+    }
+}
 function elementCountUpdate(newElementCount)
 {
 	Settings.elementCount = newElementCount;
@@ -34,24 +112,32 @@ function frameRateUpdate(newFrameRate)
 	Settings.framesPerUpdate = floor(60-newFrameRate) + 1;
 }
 
-function executeSort() 
+async function executeSort() 
 {
+	if(Settings.sortType === "NULL")
+	{
+		return;
+	}
 	Settings.sortExecution = true;
 	if(Settings.sortType == "BubbleSort") 
 	{
-		Sorting.BubbleSort(Data.elements, 0, Data.elements.length);
+		await Sorting.BubbleSort(Data.elements, 0, Data.elements.length);
 	}
 	if(Settings.sortType == "SelectionSort")
 	{
-		Sorting.SelectionSort(Data.elements, 0, Data.elements.length);
+		await Sorting.SelectionSort(Data.elements, 0, Data.elements.length);
 	}
 	if(Settings.sortType == "QuickSort")
 	{
-		Sorting.QuickSort(Data.elements, 0, Data.elements.length-1);
+		await Sorting.QuickSort(Data.elements, 0, Data.elements.length-1);
 	}
 	if(Settings.sortType == "InsertionSort")
 	{
-		Sorting.InsertionSort(Data.elements, 0, Data.elements.length);
+		await Sorting.InsertionSort(Data.elements, 0, Data.elements.length);
+	}
+	for(let i = 0; i < Data.states.length; i++)
+	{
+		Data.states[i] = Visuals.completeValue;
 	}
 }		
 
@@ -227,6 +313,18 @@ let Visuals =
 	refreshBackground()
 	{
 		background(Settings.backgroundColor);
+	},
+	async vSwap(array, firstIndex, secondIndex)
+	{
+		tmp = Data.states[firstIndex];
+		tmpTwo = Data.states[secondIndex];
+		Data.states[firstIndex] = Visuals.swapValue;
+		Data.states[secondIndex] = Visuals.swapValue;
+		await Utilities.timeout(40);
+		Utilities.aSwap(array, firstIndex, secondIndex);
+		Data.states[firstIndex] = tmp;
+		Data.states[secondIndex] = tmpTwo;
+		return;
 	}
 }
 
@@ -248,10 +346,7 @@ let Sorting =
 
 				if(array[n] > array[n+1])
 				{
-					Data.states[n] = Visuals.swapValue;
-					Data.states[n+1] = Visuals.swapValue;
-					await Utilities.timeout(40);
-					Utilities.aSwap(array, n, n+1);
+					await Visuals.vSwap(array, n, n+1);
 				}				
 				Data.states[n] = Visuals.defaultValue;
 				Data.states[n+1] = Visuals.defaultValue;
@@ -283,10 +378,8 @@ let Sorting =
  				}
  				await Utilities.timeout(40);
  			}
- 			Data.states[i] = Visuals.swapValue;
- 			Data.states[minimumIndex] = Visuals.swapValue;
- 			await Utilities.timeout(40);
- 			Utilities.aSwap(array, i, minimumIndex);
+
+ 			await Visuals.vSwap(array, i, minimumIndex);
  			Data.states[minimumIndex] = Visuals.defaultValue;
  			Data.states[i] = Visuals.completeValue;
  		}
@@ -311,6 +404,7 @@ let Sorting =
 		let pivot = array[end];
 		Data.states[start] = Visuals.saveValue;
 		Data.states[end] = Visuals.saveValue;
+		Data.states[pivotIndex] = Visuals.accessValue;
 		for(let i = start; i < end; i++) 
 		{
 			Data.states[i] = Visuals.accessValue;
@@ -319,18 +413,25 @@ let Sorting =
 			{
 				Data.states[i] = Visuals.swapValue;
 				Data.states[pivotIndex] = Visuals.swapValue;
-				await Utilities.timeout(200);
-				await Utilities.aSwap(array, i, pivotIndex);
+				if(i != pivotIndex)
+				{
+					await Visuals.vSwap(array, i, pivotIndex);
+					Data.states[pivotIndex] = Visuals.defaultValue;
+				}
 				Data.states[pivotIndex] = Visuals.defaultValue;
 				pivotIndex++;
+				Data.states[pivotIndex] = Visuals.accessValue;
 			}
 			Data.states[i] = Visuals.defaultValue;
 		}
 
 		Data.states[pivotIndex] = Visuals.swapValue;
 		Data.states[end] = Visuals.swapValue;
-		await Utilities.timeout(200);
-		await Utilities.aSwap(array, pivotIndex, end);
+		if(pivotIndex != end)
+		{
+			await Utilities.timeout(200);
+			await Utilities.aSwap(array, pivotIndex, end);
+		}
 		Data.states[pivotIndex] = Visuals.defaultValue;
 		Data.states[start] = Visuals.defaultValue;
 		Data.states[end] = Visuals.defaultValue;
@@ -344,26 +445,19 @@ let Sorting =
 
 			let value = array[i];
 			Data.states[i] = Visuals.saveValue;
-			await Utilities.timeout(40);
 			n = i -1;
+			await Utilities.timeout(40);
 			while(n >= 0 && array[n] > value)
 			{
-				Data.states[n+1] = Visuals.swapValue;
-				Data.states[n] = Visuals.swapValue;
-				await Utilities.timeout(40);
-				await Utilities.aSwap(array, n+1, n);
-				Data.states[n] = Visuals.defaultValue;
-				Data.states[n+1] = Visuals.defaultValue;
+				await Visuals.vSwap(array, n+1, n);
 				Data.states[i] = Visuals.saveValue;
 				await Utilities.timeout(40);
+				Data.states[n+1] = Visuals.defaultValue;
+				Data.states[n] = Visuals.defaultValue;
 				n = n-1;
 
 			}
-			Data.states[n+1] = Visuals.swapValue;
-			Data.states[i] = Visuals.swapValue;
-			await Utilities.timeout(40);
-
-			array[n+1] = value;	
+			array[n+1] = value;
 			Data.states[n+1] = Visuals.defaultValue;
 			Data.states[i] = Visuals.defaultValue;
 
@@ -394,6 +488,8 @@ function setup()
 		Data.elements.push(Utilities.getRandomInt(Settings.height, 5));
 		Data.states.push(0);
 	}
+	elementCountUpdate(50);
+	sortTypeUpdate("NULL");
 }
 
 

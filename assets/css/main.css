@@ -1,4 +1,4 @@
-* {
+	* {
 	padding: 0px;
 	margin: 0px;
 }
@@ -7,17 +7,51 @@ html {
 }
 body {
 	height: 100%;
+	width: 100%;
 	margin: 0px;
 }
 header {
 	display: grid;
 	justify-content: center;
 	align-items: center;
+	width: 100%;
+	grid-row-gap: 1em;
 	grid-template-areas:
-	"Title" 
-	"Form";
-	margin: auto;
-	height: 10%;
+	"Title"
+	"Form"
+	"Legend";
+
+}
+header h1 {
+	grid-area: Title;
+	display: block;
+	text-align: center;
+	width: 40em;
+}
+header form {
+	grid-area: Form;
+	text-align: center;
+	display: block;
+	width: 100%;
+}
+form li 
+{
+	padding: 1em;
+}
+#visualizerLegend
+{
+	grid-area: Legend;
+	text-align: center;
+	width: 100%;
+	display: block;
+	list-style: none;
+	text-decoration: none;
+}
+#visualizerLegend li 
+{
+	display: inline;
+	padding-left: 2.5%;
+	padding-right: 2.5%;
 }
 main {
 	height: 80%;
@@ -29,12 +63,14 @@ footer {
 	margin: auto;
 	height: 10%;
 }
-h1 {
-	grid-area: Title;
-	display: block;
-	width = 100%;
+
+article 
+{
+	padding: 1em;
+
 }
-form {
-	grid-area: Form;
-	display: block;
+
+ul 
+{
+	list-style: none;
 }
